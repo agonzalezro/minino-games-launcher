@@ -25,8 +25,9 @@ class Browser(object):
         # Main window and event
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_position(gtk.WIN_POS_CENTER_ALWAYS)
-        self.window.connect('delete_event', self.close_application)
         self.window.set_default_size(self.width, self.height)
+        self.window.connect("key-press-event", self.keypress)
+        self.window.connect('delete_event', self.close_application)
 
         # Add webkit view
         self.scrolled_window = gtk.ScrolledWindow()
@@ -48,12 +49,18 @@ class Browser(object):
             self.window.fullscreen()
 
     def parse_url(self, url):
-        if not url.startswith('http'):
+        if url.startswith('/'):
+            url = 'file://%s' % url
+        elif not url.startswith('http') and not url.startswith('file'):
             url = 'http://%s' % url
         return url
 
     def close_application(self, widget, event, data=None):
         gtk.main_quit()
+
+    def keypress(self, widget, event) :
+        if event.keyval == gtk.keysyms.Escape :
+            self.close_application(widget, event)
 
 
 class Parser(object):

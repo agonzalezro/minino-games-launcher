@@ -4,16 +4,18 @@ A simple explorer that receives a webpage as parameter to launch the game.
 ./mgl.py [options] url
 
 ### Options
-``-f`` o ``--fullscreen``: Fullscreen mode
+``-m`` or ``--maximized``: Maximize explorer window
 
-``-t`` o ``--title``: Add a title to the window
+``-f`` or ``--fullscreen``: Fullscreen mode
+
+``-t`` or ``--title``: Add a title to the window (by default is the url address)
 
 ``--width``: Redefine window size
 
 ``--height``: Redefine windoe height
 
 ### Example
-./mgl.py -f google.com
+./mgl.py -m google.com
 
 ### Requirements
 - python-webkit

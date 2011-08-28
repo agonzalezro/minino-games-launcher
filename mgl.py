@@ -11,6 +11,7 @@ class Browser(object):
     def __init__(self, options, args):
         self.url = args[0]
         self.title = options.title
+        self.maximized = options.maximized
         self.fullscreen = options.fullscreen
         self.width = options.width
         self.height = options.height
@@ -40,6 +41,9 @@ class Browser(object):
             self.window.set_title(self.url)
         self.webview.open(self.parse_url(self.url))
 
+        if self.maximized:
+            self.window.maximize()
+
         if self.fullscreen:
             self.window.fullscreen()
 
@@ -56,6 +60,9 @@ class Parser(object):
     def __init__(self):
         parser = OptionParser('usage: %prog [options or -h] url')
         parser.add_option('-t', '--title', dest='title', help='window title')
+        parser.add_option('-m', '--maximized', dest='maximized',
+                          default=False, action="store_true",
+                          help='start the launcher maximized')
         parser.add_option('-f', '--fullscreen', dest='fullscreen',
                           default=False, action="store_true",
                           help='start the launcher at fullscreen')

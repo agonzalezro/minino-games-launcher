@@ -8,10 +8,12 @@ from optparse import OptionParser
 
 
 class Browser(object):
-    def __init__(self, url, title=None, fullscreen=False):
-        self.url = url
-        self.title = title
-        self.fullscreen = fullscreen
+    def __init__(self, parser):
+        self.url = parser.args[0]
+        self.title = parser.options.title
+        self.fullscreen = parser.options.fullscreen
+        self.width = parser.options.width
+        self.height = parser.options.height
 
         gtk.gdk.threads_init()
         self.build_window()
@@ -23,7 +25,7 @@ class Browser(object):
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_position(gtk.WIN_POS_CENTER_ALWAYS)
         self.window.connect('delete_event', self.close_application)
-        self.window.set_default_size(800, 600)
+        self.window.set_default_size(self.width, self.height)
 
         # Add webkit view
         self.scrolled_window = gtk.ScrolledWindow()
@@ -42,10 +44,9 @@ class Browser(object):
             self.window.fullscreen()
 
     def parse_url(self, url):
-        if url.startswith('http'):
-            return url
-        else:
-            return 'http://%s' % url
+        if not url.startswith('http'):
+            url = 'http://%s' % url
+        return url
 
     def close_application(self, widget, event, data=None):
         gtk.main_quit()
@@ -53,21 +54,23 @@ class Browser(object):
 
 class Parser(object):
     def __init__(self):
-        parser = OptionParser('usage: %prog [options]')
+        parser = OptionParser('usage: %prog [options or -h] url')
+        parser.add_option('-t', '--title', dest='title', help='window title')
         parser.add_option('-f', '--fullscreen', dest='fullscreen',
                           default=False, action="store_true",
                           help='start the launcher at fullscreen')
-        parser.add_option('-t', '--title', dest='title', help='window title')
+        parser.add_option('--width', dest='width', default=800,
+                          type='int', help='window width')
+        parser.add_option('--height', dest='height', default=600,
+                          type='int', help='window height')
         parser.add_option('-u', '--url', dest='url',
                           type='string',
                           help='specify url to the game')
         (self.options, self.args) = parser.parse_args()
-        if not self.options.url:
+        if not self.args:
             parser.error('the url is mandatory')
 
 
 if __name__ == '__main__':
     parser = Parser()
-    browser = Browser(url=parser.options.url,
-                      title=parser.options.title,
-                      fullscreen=parser.options.fullscreen)
+    browser = Browser(parser)

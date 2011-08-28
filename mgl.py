@@ -6,6 +6,7 @@ import webkit
 
 from optparse import OptionParser
 
+
 class Browser(object):
     def __init__(self, url, title=None, fullscreen=False):
         self.url = url
@@ -63,6 +64,7 @@ class Parser(object):
         (self.options, self.args) = parser.parse_args()
         if not self.options.url:
             parser.error('the url is mandatory')
+
 
 if __name__ == '__main__':
     parser = Parser()

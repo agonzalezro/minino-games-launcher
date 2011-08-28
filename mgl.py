@@ -8,12 +8,12 @@ from optparse import OptionParser
 
 
 class Browser(object):
-    def __init__(self, parser):
-        self.url = parser.args[0]
-        self.title = parser.options.title
-        self.fullscreen = parser.options.fullscreen
-        self.width = parser.options.width
-        self.height = parser.options.height
+    def __init__(self, options, args):
+        self.url = args[0]
+        self.title = options.title
+        self.fullscreen = options.fullscreen
+        self.width = options.width
+        self.height = options.height
 
         gtk.gdk.threads_init()
         self.build_window()
@@ -73,4 +73,4 @@ class Parser(object):
 
 if __name__ == '__main__':
     parser = Parser()
-    browser = Browser(parser)
+    browser = Browser(parser.options, parser.args)

@@ -9,27 +9,27 @@ A simple explorer that receives a webpage as parameter to launch the game. You c
     ./mgl.py -m theexamplegame.com
 
 #### Creating a .desktop
-    ./mgl.py -f theexample.com -d $HOME/Desktop/thegame.desktop -t "A fantastic game" -c "Minino;Games;" -i /usr/share/pixmaps/game.png
+    ./mgl.py -f theexample.com -s $HOME/Desktop/thegame.desktop -t "A fantastic game" -c "Minino;Games;" -i /usr/share/pixmaps/game.png
 
 ### Requirements
 - python-webkit
 
 ### --help
-    Usage: mgl.py [options or -h] url
+Usage: mgl.py [options or -h] url
 
-    Options:
-      -h, --help            show this help message and exit
-      -f, --fullscreen      start the launcher at fullscreen
-      -m, --maximized       start the launcher maximized
-      -t TITLE, --title=TITLE
-                            window title
-      --width=WIDTH         window width
-      --height=HEIGHT       window height
+Options:
+  -h, --help            show this help message and exit
+  -f, --fullscreen      start the launcher at fullscreen
+  -m, --maximized       start the launcher maximized
+  -t TITLE, --title=TITLE
+                        window title
+  --width=WIDTH         window width
+  --height=HEIGHT       window height
 
-      Creating .desktop icons:
-        -c CATEGORIES, --categories=CATEGORIES
-                            ; separated categories to the icon
-        -d DESKTOP, --desktop=DESKTOP
-                            path to save the .desktop
-        -i ICON, --icon=ICON
-                            icon to use at the .desktop file
+  Creating .desktop icons:
+    -c CATEGORIES, --categories=CATEGORIES
+                        ; separated categories to the icon
+    -s SHORTCUT, --shortcut=SHORTCUT
+                        path to save the .desktop
+    -i ICON, --icon=ICON
+                        icon to use at the .desktop file

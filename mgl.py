@@ -60,8 +60,8 @@ class Browser(object):
     def close_application(self, widget, event, data=None):
         gtk.main_quit()
 
-    def keypress(self, widget, event) :
-        if event.keyval == gtk.keysyms.Escape :
+    def keypress(self, widget, event):
+        if event.keyval == gtk.keysyms.Escape:
             self.close_application(widget, event)
 
 
@@ -75,10 +75,10 @@ class Shortcut(object):
         handler = open(name, "w")
         handler.write('[Desktop Entry]\n'
                       'Name=%(title)s\n'
-                      'Exec=/usr/bin/mgl.py %(params)s%(url)s\n'
+                      'Exec=%(mgl)s %(params)s%(url)s\n'
                       'Icon=%(icon)s\n'
                       'Encoding=UTF-8\n'
-                      'Type=Applications\n'
+                      'Type=Application\n'
                       'Categories=%(categories)s\n' % self.get_icon_info())
         handler.close()
 
@@ -90,16 +90,22 @@ class Shortcut(object):
 
     def get_icon_info(self):
         return {'title': self.options.title or self.args[0],
+                'mgl': __file__,
                 'url': self.args[0],
                 'params': self.get_command_line_params(),
                 'icon': self.options.icon or 'gnome-panel-launcher',
                 'categories': self.options.categories or 'Minino;XogosRede;'}
 
     def get_command_line_params(self):
-        to_save = ('fullscreen', 'title', 'height', 'width', 'maximized')
-        params = ""
-        for param in to_save:
-            params = "--%s %s %s" % (param, getattr(self.options, param), params)
+        boolean_options = ('maximized', 'fullscreen')
+        string_options = ('title', )
+        int_options = ('width', 'height')
+        params = ''
+        for option in boolean_options:
+            if getattr(self.options, option):
+                params = '--%s %s' % (option, params)
+        for option in string_options + int_options:
+            params = '--%s "%s" %s' % (option, getattr(self.options, option), params)
         return params
 
 

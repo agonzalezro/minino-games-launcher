@@ -4,6 +4,7 @@
 import gtk
 import webkit
 
+# Deprecated but minino doesn't have python 2.7 :(
 from optparse import OptionParser, OptionGroup
 
 
@@ -74,7 +75,7 @@ class Shortcut(object):
         handler = open(name, "w")
         handler.write('[Desktop Entry]\n'
                       'Name=%(title)s\n'
-                      'Exec=/usr/bin/mgl.py %(params)s %(url)s\n'
+                      'Exec=/usr/bin/mgl.py %(params)s%(url)s\n'
                       'Icon=%(icon)s\n'
                       'Encoding=UTF-8\n'
                       'Type=Applications\n'
@@ -88,12 +89,18 @@ class Shortcut(object):
         return name
 
     def get_icon_info(self):
-        import ipdb;ipdb.set_trace()
         return {'title': self.options.title or self.args[0],
                 'url': self.args[0],
-                'params': '-m',
+                'params': self.get_command_line_params(),
                 'icon': self.options.icon or 'gnome-panel-launcher',
                 'categories': self.options.categories or 'Minino;XogosRede;'}
+
+    def get_command_line_params(self):
+        to_save = ('fullscreen', 'title', 'height', 'width', 'maximized')
+        params = ""
+        for param in to_save:
+            params = "--%s %s %s" % (param, getattr(self.options, param), params)
+        return params
 
 
 class Parser(object):

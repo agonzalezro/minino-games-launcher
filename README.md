@@ -1,10 +1,15 @@
-A simple explorer that receives a webpage as parameter to launch the game.
+A simple explorer that receives a webpage as parameter to launch the game. You can create .desktop icon directly using the ``-d`` option (see the help for mor info).
 
 ### Usage
-./mgl.py [options] url
+    ./mgl.py [options] url
 
 ### Example
-./mgl.py -m google.com
+
+#### Launching a game
+    ./mgl.py -m theexamplegame.com
+
+#### Creating a .desktop
+    ./mgl.py -f theexample.com -d $HOME/Desktop/thegame.desktop -t "A fantastic game" -c "Minino;Games;" -i /usr/share/pixmaps/game.png
 
 ### Requirements
 - python-webkit

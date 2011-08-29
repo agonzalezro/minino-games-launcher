@@ -4,7 +4,7 @@
 import gtk
 import webkit
 
-from optparse import OptionParser
+from optparse import OptionParser, OptionGroup
 
 
 class Browser(object):
@@ -16,6 +16,7 @@ class Browser(object):
         self.width = options.width
         self.height = options.height
 
+    def __call__(self):
         gtk.gdk.threads_init()
         self.build_window()
         self.window.show_all()
@@ -63,28 +64,73 @@ class Browser(object):
             self.close_application(widget, event)
 
 
+class Shortcut(object):
+    def __init__(self, options, args):
+        self.options = options
+        self.args = args
+
+    def create(self):
+        name = self.get_name()
+        handler = open(name, "w")
+        handler.write('[Desktop Entry]\n'
+                      'Name=%(title)s\n'
+                      'Exec=/usr/bin/mgl.py %(params)s %(url)s\n'
+                      'Icon=%(icon)s\n'
+                      'Encoding=UTF-8\n'
+                      'Type=Applications\n'
+                      'Categories=%(categories)s\n' % self.get_icon_info())
+        handler.close()
+
+    def get_name(self):
+        name = self.options.shortcut
+        if not name.endswith('.desktop'):
+            name = name + '.desktop'
+        return name
+
+    def get_icon_info(self):
+        import ipdb;ipdb.set_trace()
+        return {'title': self.options.title or self.args[0],
+                'url': self.args[0],
+                'params': '-m',
+                'icon': self.options.icon or 'gnome-panel-launcher',
+                'categories': self.options.categories or 'Minino;XogosRede;'}
+
+
 class Parser(object):
     def __init__(self):
         parser = OptionParser('usage: %prog [options or -h] url')
-        parser.add_option('-t', '--title', dest='title', help='window title')
-        parser.add_option('-m', '--maximized', dest='maximized',
-                          default=False, action="store_true",
-                          help='start the launcher maximized')
-        parser.add_option('-f', '--fullscreen', dest='fullscreen',
-                          default=False, action="store_true",
-                          help='start the launcher at fullscreen')
-        parser.add_option('--width', dest='width', default=800,
-                          type='int', help='window width')
-        parser.add_option('--height', dest='height', default=600,
-                          type='int', help='window height')
-        parser.add_option('-u', '--url', dest='url',
-                          type='string',
-                          help='specify url to the game')
+        self.add_options(parser)
         (self.options, self.args) = parser.parse_args()
         if not self.args:
             parser.error('the url is mandatory')
 
+    def add_options(self, parser):
+        parser.add_option('-f', '--fullscreen', dest='fullscreen',
+                          default=False, action="store_true",
+                          help='start the launcher at fullscreen')
+        parser.add_option('-m', '--maximized', dest='maximized',
+                          default=False, action="store_true",
+                          help='start the launcher maximized')
+        parser.add_option('-t', '--title', dest='title', help='window title')
+        parser.add_option('--width', dest='width', default=800, type='int',
+                          help='window width')
+        parser.add_option('--height', dest='height', default=600, type='int',
+                          help='window height')
+
+        group = OptionGroup(parser, "Creating .desktop icons")
+        group.add_option('-c', '--categories',
+                         help='; separated categories to the icon')
+        group.add_option('-s', '--shortcut', help='path to save the .desktop')
+        group.add_option('-i', '--icon',
+                         help='icon to use at the .desktop file')
+        parser.add_option_group(group)
+
 
 if __name__ == '__main__':
     parser = Parser()
-    browser = Browser(parser.options, parser.args)
+    if parser.options.shortcut:
+        shortcut = Shortcut(parser.options, parser.args)
+        shortcut.create()
+    else:
+        browser = Browser(parser.options, parser.args)
+        browser()
